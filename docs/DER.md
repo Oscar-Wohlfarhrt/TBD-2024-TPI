@@ -1,10 +1,14 @@
-[Volver al README](/README.md)
+[Volver al README](./../README.md)
 
 # Diagrama Entidad Relación
 
 ```mermaid
 erDiagram
 	Area{
+		varchar2(50) Name
+	}
+	Chacra{
+		int Id
 		varchar2(50) Name
 	}
 	Connection{
@@ -16,19 +20,6 @@ erDiagram
 		int Id
 		varchar2(50) Name
 	}
-	Section{
-		int Id
-	}
-	Chacra{
-		int Id
-		varchar2(50) Name
-	}
-	Square{
-		int Id
-	}
-	Parcela{
-		int Id
-	}
 	Material{
 		int Id
 		varchar2(50) Name
@@ -38,6 +29,15 @@ erDiagram
 		float cost
 		Date StartDate
 		Date EndDate
+	}
+	Parcela{
+		int Id
+	}
+	Section{
+		int Id
+    }
+	Square{
+		int Id
 	}
 	Task{
 		varchar2(50) Description
@@ -57,6 +57,7 @@ erDiagram
 		int NroTrabajoReferencia
 		int prioridad
 	}
+    
 	Material ||--|{ TaskMaterial : de
 	Task ||--|{ TaskMaterial : usa
 	Task }|--|| Area : resposable
