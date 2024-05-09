@@ -38,12 +38,15 @@ erDiagram
 		int ChacraId FK
 		int SectionId FK
         int LocaleId PK,FK
-        int DNI
-        varchar2(50) Name
-        varchar2(50) LastName
+        int DNI FK
         float Latitude
 		float Longitude
 	}
+    User{
+        int DNI PK
+        varchar2(50) Name
+        varchar2(50) LastName
+    }
 
     Area{
         int AreaId PK
@@ -128,6 +131,7 @@ erDiagram
 	Task ||--|{ TaskMaterial : usa
 	Material ||--|{ TaskMaterial : "esta en"
     Priority ||--|{ Work : "tiene"
+    User ||--|{ Connection : "tiene"
 ```
 
 Worker ||--|{ Work : tiene
