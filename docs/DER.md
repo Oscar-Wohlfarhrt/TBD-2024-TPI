@@ -4,71 +4,130 @@
 
 ```mermaid
 erDiagram
-	Area{
-		varchar2(50) Name
-	}
-	Chacra{
-		int Id
-		varchar2(50) Name
-	}
-	Connection{
-		int Id
-		float Lat
-		float Lon
-	}
 	Locale{
-		int Id
+		int LocaleId PK
 		varchar2(50) Name
-	}
-	Material{
-		int Id
-		varchar2(50) Name
-	}
-	TaskMaterial{
-		int Quantity
-		float cost
-		Date StartDate
-		Date EndDate
-	}
-	Parcela{
-		int Id
 	}
 	Section{
-		int Id
+		int SectionId PK
+        int LocaleId PK,FK
     }
+	Chacra{
+		int ChacraId PK
+		int SectionId PK,FK
+        int LocaleId PK,FK
+		varchar2(50) Name
+	}
 	Square{
-		int Id
+		int SquareId PK
+		int ChacraId PK,FK
+		int SectionId PK,FK
+        int LocaleId PK,FK
 	}
-	Task{
-		varchar2(50) Description
-		Date ETA
-		Date Creation
-		int Legajo
-		float ManWorkCost
+	Plot{
+		int PlotId PK
+		int SquareId PK,FK
+		int ChacraId PK,FK
+		int SectionId PK,FK
+        int LocaleId PK,FK
 	}
-	User{
-		int Legajo
+	Connection{
+		int ConnectionNum PK
+		int PlotId FK
+		int SquareId FK
+		int ChacraId FK
+		int SectionId FK
+        int LocaleId PK,FK
+        int DNI
+        varchar2(50) Name
+        varchar2(50) LastName
+        float Latitude
+		float Longitude
+	}
+
+    Area{
+        int AreaId PK
+		varchar2(50) Name
+	}
+	Worker{
+		int FileNumber PK
+        int AreaId FK
 		varchar2(50) Name
 		varchar2(50) LastName
 	}
 	Work{
-		int NumeroConexion
-		Date FechaSolicitud
-		int NroTrabajoReferencia
-		int prioridad
+        int RefNumWork PK
+        int Priority FK
+		int ConnectionNum FK
+		int FileNumber FK
+		Date RequestDate
+        Date StartDate
+        Date EndDate
 	}
-    
-	Material ||--|{ TaskMaterial : de
-	Task ||--|{ TaskMaterial : usa
-	Task }|--|| Area : resposable
-	User ||--|{ Work : tiene
-	Work ||--|{ Task : contiene
-	Work }|--|| Connection : tiene
-	User }|--|| Area : "trabaja en"
+    Priority{
+        int Priority PK
+        varchar2(50) PriorDescription
+    }
+	Task{
+        int RefNumWork PK,FK
+		int TaskNumber PK
+        varchar2(50) Description
+		Date ETA
+		Date Creation
+		float ManWorkCost
+		int FileNumber FK
+        int TaskState FK
+        int AreaId FK
+	}
+	Material{
+		int Id PK
+		varchar2(50) Name
+	}
+	TaskMaterial{
+        int RefNumWork PK,FK
+        int TaskNumber PK,FK
+        int MaterialId PK,FK
+		int Quantity
+		float Cost
+		Date CostStartDate
+		Date CostEndDate
+	}
+    TaskState{
+        int TaskStateNum PK
+        varchar2(50) Description
+    }
 
+    MonthCertificate{
+        Date CurrentDate PK
+        Date StartDate
+        Date EndDate
+        varchar2(50) Company
+        varchar2(50) ElectricCompany
+    }
+    MonthCertificateDetail{
+        Date CurrentDate PK,FK
+        int Index PK
+        int ConnectionNum FK
+    }
+
+    MonthCertificate ||--|{ MonthCertificateDetail : tiene
+    MonthCertificateDetail }|--|| Connection: "esta en"
+    
 	Locale ||--|{ Section : tiene
 	Section ||--|{ Chacra : tiene
 	Chacra ||--|{ Square : tiene
-	Square ||--|{ Parcela : tiene
-	Connection }|--|| Parcela : tiene
+	Square ||--|{ Plot : tiene
+	Connection }|--|| Plot : tiene
+    
+	Connection ||--|{ Work : tiene
+	Worker }|--|| Area : "trabaja en"
+    Task }|--|| Worker : registra
+	Task }|--|| Area : resposable
+	Work ||--|{ Task : contiene
+    Task }|--|| TaskState : tiene
+	Task ||--|{ TaskMaterial : usa
+	Material ||--|{ TaskMaterial : "esta en"
+    Priority ||--|{ Work : "tiene"
 ```
+
+Worker ||--|{ Work : tiene
