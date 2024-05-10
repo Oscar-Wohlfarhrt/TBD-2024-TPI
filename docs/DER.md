@@ -104,17 +104,22 @@ erDiagram
         Date CurrentDate PK
         Date StartDate
         Date EndDate
-        varchar2(50) Company
-        varchar2(50) ElectricCompany
+        int Company FK
+        int ElectricCompany FK
     }
     MonthCertificateDetail{
         Date CurrentDate PK,FK
         int Index PK
         int ConnectionNum FK
     }
+	Company{
+		int CompanyId PK
+		varchar2(50) CompanyName
+	}
 
-    MonthCertificate ||--|{ MonthCertificateDetail : tiene
+    MonthCertificate ||--|{ MonthCertificateDetail : "tiene"
     MonthCertificateDetail }|--|| Connection: "esta en"
+    Company ||--|{ MonthCertificate : "de"
     
 	Locale ||--|{ Section : tiene
 	Section ||--|{ Chacra : tiene
@@ -133,5 +138,3 @@ erDiagram
     Priority ||--|{ Work : "tiene"
     User ||--|{ Connection : "tiene"
 ```
-
-Worker ||--|{ Work : tiene
