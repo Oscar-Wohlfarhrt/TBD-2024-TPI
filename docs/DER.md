@@ -58,8 +58,20 @@ erDiagram
 		varchar2(50) Name
 		varchar2(50) LastName
 	}
+	GenericWork{
+		int WorkTypeId PK
+		varchar(50) Description
+	}
+	GenericTask{
+		int WorkType PK,FK
+		int TaskId PK
+		int Order
+		varchar(50) Description
+		TimeSpan EstimatedDuration
+	}
 	Work{
         int RefNumWork PK
+		int WorkType FK
         int Priority FK
 		int ConnectionNum FK
 		int FileNumber FK
@@ -73,8 +85,7 @@ erDiagram
     }
 	Task{
         int RefNumWork PK,FK
-		int TaskNumber PK
-        varchar2(50) Description
+		int TaskNumber FK
 		Date ETA
 		Date Creation
 		float ManWorkCost
@@ -110,16 +121,23 @@ erDiagram
     MonthCertificateDetail{
         Date CurrentDate PK,FK
         int Index PK
-        int ConnectionNum FK
+        int WorkId FK
     }
+	MonthCertificateMats{
+		Date CurrentDate PK
+		int MatId PK
+
+	}
 	Company{
 		int CompanyId PK
 		varchar2(50) CompanyName
 	}
 
     MonthCertificate ||--|{ MonthCertificateDetail : "tiene"
-    MonthCertificateDetail }|--|| Connection: "esta en"
+    MonthCertificateDetail }|--|| Work: "esta en"
     Company ||--|{ MonthCertificate : "de"
+	MonthCertificate ||--|{ MonthCertificateMats : "tiene"
+	MonthCertificateMats }|--|| Material : "de"
     
 	Locale ||--|{ Section : tiene
 	Section ||--|{ Chacra : tiene
@@ -137,4 +155,7 @@ erDiagram
 	Material ||--|{ TaskMaterial : "esta en"
     Priority ||--|{ Work : "tiene"
     User ||--|{ Connection : "tiene"
+
+	GenericWork ||--|{ Work : "es"
+	GenericTask }|--|| GenericWork : "tiene"
 ```
