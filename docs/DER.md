@@ -42,7 +42,7 @@ erDiagram
         float Latitude
 		float Longitude
 	}
-    User{
+    ConnectionUser{
         int DNI PK
         varchar2(50) Name
         varchar2(50) LastName
@@ -162,7 +162,7 @@ erDiagram
 	Task ||--|{ TaskMaterial : usa
 	Material ||--|{ TaskMaterial : "esta en"
     Priority ||--|{ Work : "tiene"
-    User ||--|{ Connection : "tiene"
+    ConnectionUser ||--|{ Connection : "tiene"
 
 	GenericWork ||--|{ Work : "es"
 	GenericTask }|--|| GenericWork : "tiene"
