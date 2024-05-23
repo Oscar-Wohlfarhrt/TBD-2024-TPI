@@ -67,7 +67,15 @@ erDiagram
 		int TaskId PK
 		int Order
 		varchar(50) Description
-		TimeSpan EstimatedDuration
+		long EstimatedDuration
+	}
+    GenericTaskMaterial{
+        int RefNumWork PK,FK
+        int TaskNumber PK,FK
+        int MaterialId PK,FK
+		int Quantity
+		float Cost
+		long validitySpan
 	}
 	Work{
         int RefNumWork PK
@@ -158,4 +166,6 @@ erDiagram
 
 	GenericWork ||--|{ Work : "es"
 	GenericTask }|--|| GenericWork : "tiene"
+	GenericTaskMaterial ||--|{ GenericTask : "usa"
+    GenericTaskMaterial }|--|| Material : "de"
 ```
