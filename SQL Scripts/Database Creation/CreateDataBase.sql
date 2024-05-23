@@ -11,4 +11,4 @@ CREATE TABLE dbo.RanNames(
 );
 
 INSERT INTO dbo.RanNames (Name,Type)
-VALUES ("Test",0);
+VALUES ('Test',0);
