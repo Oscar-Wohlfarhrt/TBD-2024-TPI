@@ -12,3 +12,11 @@ CREATE TABLE dbo.RanNames(
 
 INSERT INTO dbo.RanNames (Name,Type)
 VALUES ('Test',0);
+INSERT INTO dbo.RanNames (Name,Type)
+VALUES ('Test2',0);
+INSERT INTO dbo.RanNames (Name,Type)
+VALUES ('Test3',0);
+INSERT INTO dbo.RanNames (Name,Type)
+VALUES ('Test4',0);
+
+SELECT * FROM dbo.RanNames;
