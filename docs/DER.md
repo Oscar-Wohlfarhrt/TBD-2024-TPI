@@ -87,7 +87,7 @@ erDiagram
         Date StartDate
         Date EndDate
 	}
-    Priority{
+    WorkPriority{
         int Priority PK
         varchar2(50) PriorDescription
     }
