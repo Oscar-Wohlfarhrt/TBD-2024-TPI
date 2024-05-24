@@ -78,7 +78,7 @@ erDiagram
 		long validitySpan
 	}
 	Work{
-        int RefNumWork PK
+        int WorkId PK
 		int WorkType FK
         int Priority FK
 		int ConnectionNum FK
@@ -92,7 +92,7 @@ erDiagram
         varchar2(50) PriorDescription
     }
 	Task{
-        int RefNumWork PK,FK
+        int WorkId PK,FK
 		int TaskNumber FK
 		Date ETA
 		Date Creation
@@ -106,7 +106,7 @@ erDiagram
 		varchar2(50) Name
 	}
 	TaskMaterial{
-        int RefNumWork PK,FK
+        int WorkId PK,FK
         int TaskNumber PK,FK
         int MaterialId PK,FK
 		int Quantity
@@ -134,7 +134,13 @@ erDiagram
 	MonthCertificateMats{
 		Date CurrentDate PK
 		int MatId PK
-
+        int WorkId PK,FK
+        int TaskNumber PK,FK
+        int MaterialId PK,FK
+		int Quantity
+		float Cost
+		Date CostStartDate
+		Date CostEndDate
 	}
 	Company{
 		int CompanyId PK
