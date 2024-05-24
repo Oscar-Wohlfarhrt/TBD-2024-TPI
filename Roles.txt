@@ -1,0 +1,3 @@
+Gerente
+OperadorTelefonico
+Trabajador
