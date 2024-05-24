@@ -124,7 +124,7 @@ erDiagram
         Date StartDate
         Date EndDate
         int Company FK
-        int ElectricCompany FK
+        int ElectricCompanyId FK
     }
     MonthCertificateDetail{
         Date CurrentDate PK,FK
@@ -146,10 +146,15 @@ erDiagram
 		int CompanyId PK
 		varchar2(50) CompanyName
 	}
+	ElectricCompany{
+		int ElectricCompanyId PK
+		varchar2(50) ElectricCompanyName
+	}
 
     MonthCertificate ||--|{ MonthCertificateDetail : "tiene"
     MonthCertificateDetail }|--|| Work: "esta en"
     Company ||--|{ MonthCertificate : "de"
+	ElectricCompany ||--|{ MonthCertificate : "de"
 	MonthCertificate ||--|{ MonthCertificateMats : "tiene"
 	MonthCertificateMats }|--|| Material : "de"
     
