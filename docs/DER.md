@@ -172,7 +172,7 @@ erDiagram
     Task }|--|| TaskState : tiene
 	Task ||--|{ TaskMaterial : usa
 	Material ||--|{ TaskMaterial : "esta en"
-    Priority ||--|{ Work : "tiene"
+    WorkPriority ||--|{ Work : "tiene"
     ConnectionUser ||--|{ Connection : "tiene"
 
 	GenericWork ||--|{ Work : "es"
