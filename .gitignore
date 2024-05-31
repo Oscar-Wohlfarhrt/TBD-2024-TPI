@@ -1,2 +1,5 @@
 .vs
 .vs/**
+
+build/**
+obj/**
