@@ -1,0 +1,67 @@
+@page "/table/{name}"
+
+@using DBLinker
+@using System.Data;
+
+@inject ISqlLinkerService dbLink
+
+
+<h1>@Name</h1>
+
+@if((table = GetTable()) != null){
+    <table class="table">
+        <thead>
+            <tr>
+                @foreach (DataColumn head in table.Columns){
+                    <th>@head.ColumnName</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DataRow row in table.Rows)
+            {
+                <tr>
+                    @foreach(var val in row.ItemArray){
+                        <td>@val</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else{
+    <h2>La tabla no existe o no se pudo cargar</h2>
+    <span>@Name</span>
+    <span>@outName</span>
+}
+
+
+@code{
+    [Parameter]
+    public string? Name { get; set; }
+    public string? outName;
+    DataTableAdapter? table;
+
+    private DataTableAdapter? GetTable(){
+        if(Name ==null)
+            return null;
+
+        string[] splited = Name.Replace("_"," ").Split('.');
+        //[TestView]
+        //table = GetTable("[dbo].[RanNames]")
+        dbLink.Connect("Oscar-PC","TBD2024","sa","Enderfire@20",autoFill: true,autoUpdate: true);
+        //dbLink.LoadTables();
+
+        if(splited.Length == 2){
+            outName=$"[{splited[0]}].[{splited[1]}]";
+            return dbLink.GetTable(outName);
+        }
+        else if(splited.Length == 1){
+            outName=$"[{splited[0]}]";
+            return dbLink.GetView(outName);
+        }
+        else
+            return null;
+    }
+}
+    

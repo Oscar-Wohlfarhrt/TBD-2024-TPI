@@ -1,17 +1,16 @@
 using System.Data;
 using System.Data.SqlClient;
+using Microsoft.Extensions.ObjectPool;
 
 namespace DBLinker
 {
-    interface SqlLinker{
-        
-    }
-
     class SqlLinker
     {
         readonly SqlConnection dbc;
         readonly Dictionary<string, DataTableAdapter> tables = [];
         readonly bool autoFill, autoUpdate;
+
+        public bool IsConnected => dbc.State == ConnectionState.Open;
 
         public SqlLinker(string server, string database, string user, string password, bool encrypt = true, bool trustCertificate = true, bool autoFill = false, bool autoUpdate = false)
         {
@@ -30,6 +29,10 @@ namespace DBLinker
             dbc.Open();
         }
 
+        public void Close(){
+            dbc.Close();
+        }
+
         public string[] GetTableNames(){
             SqlCommand cmd = new("SELECT TABLE_SCHEMA,TABLE_NAME FROM INFORMATION_SCHEMA.TABLES;", dbc);
             SqlDataReader reader = cmd.ExecuteReader();
@@ -39,6 +42,19 @@ namespace DBLinker
             while (reader.Read())
             {
                 ts.Add($"[{reader["TABLE_SCHEMA"]}].[{reader["TABLE_NAME"]}]");
+            }
+            reader.Close();
+            return ts.ToArray();
+        }
+        public string[] GetViewNames(){
+            SqlCommand cmd = new("SELECT name FROM sys.views;", dbc);
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            List<string> ts = [];
+
+            while (reader.Read())
+            {
+                ts.Add($"[{reader["name"]}]");
             }
             reader.Close();
             return ts.ToArray();
@@ -56,7 +72,25 @@ namespace DBLinker
             return false;
         }
 
-        public DataTableAdapter this[string tableName] { get => tables[tableName]; }
+        public DataTableAdapter? GetView(string name){
+            string[] views = GetViewNames();
+
+            if(views.Contains(name))
+                return new DataTableAdapter(new SqlDataAdapter($"SELECT * FROM {name};", dbc), autoFill, autoUpdate,false);
+
+            return null;
+        }
+
+        public DataTableAdapter? this[string tableName] { get => tables.ContainsKey(tableName)?tables[tableName]:null; }
+
+        public DataTableAdapter? GetTable(string name){
+            string[] views = GetTableNames();
+
+            if(views.Contains(name))
+                return new DataTableAdapter(new SqlDataAdapter($"SELECT * FROM {name};", dbc), autoFill, autoUpdate);
+
+            return null;
+        }
     }
 
     public class DataTableAdapter : DataTable
@@ -64,12 +98,15 @@ namespace DBLinker
         bool fillRoutine = false;
         private SqlDataAdapter adapter;
 
-        public DataTableAdapter(SqlDataAdapter adapter, bool autoFill = false, bool autoUpdate = false) : base()
+        public DataTableAdapter(SqlDataAdapter adapter, bool autoFill = false, bool autoUpdate = false, bool retriveCommands = true) : base()
         {
-            SqlCommandBuilder cmdbuild = new SqlCommandBuilder(adapter);
-            adapter.InsertCommand = cmdbuild.GetInsertCommand();
-            adapter.DeleteCommand = cmdbuild.GetDeleteCommand();
-            adapter.UpdateCommand = cmdbuild.GetUpdateCommand();
+            SqlCommandBuilder cmdbuild = new(adapter);
+            if(retriveCommands){
+                adapter.InsertCommand = cmdbuild.GetInsertCommand();
+                adapter.DeleteCommand = cmdbuild.GetDeleteCommand();
+                adapter.UpdateCommand = cmdbuild.GetUpdateCommand();
+            }
+
             adapter.ContinueUpdateOnError = true;
             //adapter.AcceptChangesDuringUpdate=true;
             this.adapter = adapter;
