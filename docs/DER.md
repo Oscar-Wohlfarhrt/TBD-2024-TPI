@@ -93,7 +93,7 @@ erDiagram
     }
 	Task{
         int WorkId PK,FK
-		int TaskNumber FK
+		int TaskNumber PK
 		Date ETA
 		Date Creation
 		float ManWorkCost
@@ -120,19 +120,19 @@ erDiagram
     }
 
     MonthCertificate{
-        Date CurrentDate PK
+        Date CreationDate PK
         Date StartDate
         Date EndDate
         int Company FK
         int ElectricCompanyId FK
     }
     MonthCertificateDetail{
-        Date CurrentDate PK,FK
+        Date CreationDate PK,FK
         int Index PK
         int WorkId FK
     }
 	MonthCertificateMats{
-		Date CurrentDate PK
+		Date CreationDate PK
 		int MatId PK
         int WorkId PK,FK
         int TaskNumber PK,FK

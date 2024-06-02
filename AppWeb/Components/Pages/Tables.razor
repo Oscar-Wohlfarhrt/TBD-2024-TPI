@@ -1,0 +1,31 @@
+@page "/table"
+
+@using DBLinker
+@using System.Data;
+
+@inject ISqlLinkerService dbLink
+
+<h2>Tables</h2>
+@foreach(string t in GetTables()){
+    <a href="/table/@(t.Replace("[","").Replace("]",""))">@(t.Replace("[","").Replace("]",""))</a><br>
+}
+
+<h2>Views</h2>
+@foreach(var v in GetViews()){
+    <a href="/table/@(v.Replace("[","").Replace("]",""))">@(v.Replace("[","").Replace("]",""))</a><br>
+}
+
+@code{
+    private string[] GetTables(){
+        if(!dbLink.IsConnected)
+            dbLink.Connect("Oscar-PC","TBD2024","sa","Enderfire@20",autoFill: true,autoUpdate: true);
+
+        return dbLink.GetTableNames() ?? [];
+    }
+    private string[] GetViews(){
+        if(!dbLink.IsConnected)
+            dbLink.Connect("Oscar-PC","TBD2024","sa","Enderfire@20",autoFill: true,autoUpdate: true);
+
+        return dbLink.GetViewNames() ?? [];
+    }
+}
