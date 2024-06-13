@@ -1,0 +1,46 @@
+@page "/dblogin"
+
+@rendermode InteractiveServer
+@inject ISqlLinkerService db
+@inject IJSRuntime JSRuntime
+@using JSCookie;
+
+<PageTitle>Database Login</PageTitle>
+
+<h4>Database Server</h4>
+<input type="text" class="form-control mb-3" @bind-value=databaseServer id="server"/>
+
+<h4>Database Username</h4>
+<input type="text" class="form-control mb-3" @bind-value=dbUsername id="username"/>
+
+<h4>Database Password</h4>
+<input type="password" class="form-control mb-3" @bind-value=dbPassword id="password">
+
+<button type="button" class="btn btn-primary mb-3" @onclick="LoginDatabase">Log in</button>
+
+    @if(db.IsConnected){
+        <div class="alert alert-success" role="alert">
+            Se ha conectado exitosamente como: @dbUsername
+        </div>
+    }
+    else{
+        <div class="alert alert-danger" role="alert">
+            Datos de login incorrectos
+        </div>
+    }
+
+@code{
+    private string databaseServer="Oscar-PC";
+    private string dbUsername="";
+    private string dbPassword="";
+
+    private bool firstTry;
+    private bool connected;
+
+    private void LoginDatabase(){
+        firstTry = false;
+        connected = false;
+        connected = db.Connect(databaseServer,"TBD2024",dbUsername,dbPassword,autoFill: true,autoUpdate: true);
+    }
+}    
+    

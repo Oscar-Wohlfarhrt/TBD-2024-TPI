@@ -1,0 +1,15 @@
+@page "/views"
+
+@using DBLinker
+@using System.Data;
+
+@inject ISqlLinkerService dbLink
+
+<h2>Views</h2>
+@foreach(var v in GetViews()){
+    <a href="/tableviewer/@(v.Replace("[","").Replace("]",""))">@(v.Replace("[","").Replace("]",""))</a><br>
+}
+
+@code{
+    private string[] GetViews() => dbLink.GetViewNames() ?? [];
+}

@@ -15,3 +15,16 @@ GO
 
 Insert into dbo.RanNames (Name,Type)
 Values ('AnotherTest3',0);
+
+
+Select * from RanNames
+
+
+Begin TRAN
+Insert into dbo.RanNames (Name,Type)
+Values ('AnotherTest3',0);
+Insert into dbo.RanNames (Name,Type)
+Values ('AnotherTest3','test');
+Insert into dbo.RanNames (Name,Type)
+Values ('AnotherTest3',0);
+COMMIT TRAN

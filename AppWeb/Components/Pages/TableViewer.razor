@@ -1,4 +1,4 @@
-@page "/table/{name}"
+@page "/tableviewer/{name}"
 
 @using DBLinker
 @using System.Data;
@@ -49,7 +49,7 @@ else{
         string[] splited = Name.Replace("_"," ").Split('.');
         //[TestView]
         //table = GetTable("[dbo].[RanNames]")
-        dbLink.Connect("Oscar-PC","TBD2024","sa","Enderfire@20",autoFill: true,autoUpdate: true);
+        //dbLink.Connect("Oscar-PC","TBD2024","sa","Enderfire@20",autoFill: true,autoUpdate: true);
         //dbLink.LoadTables();
 
         if(splited.Length == 2){

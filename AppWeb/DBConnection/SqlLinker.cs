@@ -91,6 +91,22 @@ namespace DBLinker
 
             return null;
         }
+
+        public SqlCommand CreateCommand(string sqlCommand) => new(sqlCommand, dbc);
+
+        public static string[] GetDBUsers(string server, string database, string user, string password, bool encrypt = true, bool trustCertificate = true){
+            SqlLinker db = new(server, database, user, password, encrypt,trustCertificate);
+            SqlCommand cmd = db.CreateCommand("select * from sys.server_principals where type like 'S' and is_disabled = 0");
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            List<string> dbUsers = [];
+            while (reader.Read())
+                dbUsers.Add($"[{reader["name"]}]");
+
+            reader.Close();
+
+            return [..dbUsers];
+        }
     }
 
     public class DataTableAdapter : DataTable
