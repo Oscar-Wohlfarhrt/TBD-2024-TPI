@@ -51,8 +51,6 @@ else{
     public string? outName;
     DataTableAdapter? table;
 
-    IFormCollection? extForm;
-
     private DataTableAdapter? GetParameters(){
         if(Name == null)
             return null;
@@ -60,7 +58,8 @@ else{
         //string[] splited = Name.Replace("_"," ").Split('.');
         
         DataTableAdapter? table = dbLink.GetView("[dev].[DBPROCEDURES_PARAMS]",$"FULL_NAME LIKE '{Name}'","SPECIFIC_NAME, OBJECT_ID, PARAM_ID");
-        Parameters = new string[table?.Rows.Count ?? 0];
+        if((Parameters == null) || (Parameters.Length != (table?.Rows.Count ?? 0)))
+            Parameters = new string[table?.Rows.Count ?? 0];
         return table;
     }
 
@@ -72,8 +71,10 @@ else{
         //Console.WriteLine($"{Parameters[index]}");
     }
     private void RunProcedure(EventArgs args){
-        foreach(string s in Parameters){
-            Console.WriteLine(s);
+        if(table != null){
+            foreach(DataRow row in table?.Rows){
+                Console.WriteLine($"{row["PARAM_NAME"]} = {Parameters[(int)row["PARAM_ID"]-1]}");
+            }
         }
     }
 
