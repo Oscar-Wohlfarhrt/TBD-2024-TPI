@@ -1,0 +1,69 @@
+USE TBD2024;
+
+CREATE LOGIN OOscar WITH PASSWORD = 'Ab123456';
+CREATE LOGIN TOscar WITH PASSWORD = 'Ab123456';
+CREATE USER OOscar FOR LOGIN OOscar;
+CREATE USER TOscar FOR LOGIN TOscar;
+
+
+ALTER ROLE Gerente ADD MEMBER GOscar;
+ALTER ROLE OperadorTelefonico ADD MEMBER OOscar;
+ALTER ROLE Trabajador ADD MEMBER TOscar;
+
+select P.Name, R.Name
+from sys.database_principals P 
+left outer join sys.database_role_members RM on P.principal_id=RM.member_principal_id 
+left outer join sys.database_principals R on R.principal_id=RM.role_principal_id
+
+
+--permisions start
+GRANT SELECT,INSERT,UPDATE,EXECUTE ON SCHEMA::dbo TO Gerente
+GRANT SELECT,INSERT,UPDATE,EXECUTE ON SCHEMA::ger TO Gerente
+GRANT SELECT,INSERT,UPDATE,EXECUTE ON SCHEMA::opt TO Gerente
+GRANT SELECT,INSERT,UPDATE,EXECUTE ON SCHEMA::tra TO Gerente
+GRANT SELECT ON SCHEMA::dev TO Gerente
+
+GRANT SELECT ON SCHEMA::dbo TO OperadorTelefonico
+DENY INSERT,UPDATE,EXECUTE ON SCHEMA::dbo TO OperadorTelefonico
+DENY SELECT,INSERT,UPDATE,EXECUTE ON SCHEMA::ger TO OperadorTelefonico
+GRANT SELECT,INSERT,UPDATE,EXECUTE ON SCHEMA::opt TO OperadorTelefonico
+DENY SELECT,INSERT,UPDATE,EXECUTE ON SCHEMA::tra TO OperadorTelefonico
+GRANT SELECT ON SCHEMA::dev TO OperadorTelefonico
+
+GRANT SELECT ON SCHEMA::dbo TO Trabajador
+DENY INSERT,UPDATE,EXECUTE ON SCHEMA::dbo TO Trabajador
+DENY SELECT,INSERT,UPDATE,EXECUTE ON SCHEMA::ger TO Trabajador
+DENY SELECT,INSERT,UPDATE,EXECUTE ON SCHEMA::opt TO Trabajador
+GRANT SELECT,INSERT,UPDATE,EXECUTE ON SCHEMA::tra TO Trabajador
+GRANT SELECT ON SCHEMA::dev TO Trabajador
+--permisions end
+
+
+go
+CREATE SCHEMA dev;
+go
+CREATE SCHEMA ger;
+go
+CREATE SCHEMA opt;
+go
+CREATE SCHEMA tra;
+go
+ALTER SCHEMA ger TRANSFER OBJECT::dbo.MonthCertificate
+ALTER SCHEMA ger TRANSFER OBJECT::dbo.MonthCertificateDetail
+ALTER SCHEMA ger TRANSFER OBJECT::dbo.MonthCertificateMats
+ALTER SCHEMA ger TRANSFER OBJECT::dbo.Company
+ALTER SCHEMA opt TRANSFER OBJECT::dbo.NewWork
+ALTER SCHEMA dev TRANSFER OBJECT::dbo.RanNames
+ALTER SCHEMA dev TRANSFER OBJECT::dbo.RanNamesCross
+ALTER SCHEMA dev TRANSFER OBJECT::dbo.DBPROCEDURES
+ALTER SCHEMA dev TRANSFER OBJECT::dbo.DBPROCEDURES_PARAMS
+ALTER SCHEMA dev TRANSFER OBJECT::TestView
+go
+
+SELECT * FROM sys.schemas;
+
+
+
+Select * From sysusers where issqlrole = 1
+
+

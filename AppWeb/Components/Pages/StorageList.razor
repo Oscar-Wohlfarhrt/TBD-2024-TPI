@@ -1,0 +1,19 @@
+@page "/storeproc"
+
+@using DBLinker
+@using System.Data;
+
+@inject ISqlLinkerService dbLink
+
+<h2>Formularios</h2>
+@if((table = GetProcedures()) != null){
+    @foreach(DataRow row in table.Rows){
+        <a href="/storeproc/@row["FULL_NAME"]">@row["FULL_NAME"]</a><br>
+    }
+}
+
+@code{
+    DataTableAdapter? table;
+
+    private DataTableAdapter? GetProcedures() => dbLink.GetView("[dev].[DBPROCEDURES]",$"","FULL_NAME");
+}

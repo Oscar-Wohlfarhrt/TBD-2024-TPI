@@ -47,14 +47,14 @@ namespace DBLinker
             return ts.ToArray();
         }
         public string[] GetViewNames(){
-            SqlCommand cmd = new("SELECT name FROM sys.views;", dbc);
+            SqlCommand cmd = new("SELECT TABLE_SCHEMA,TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS;", dbc);
             SqlDataReader reader = cmd.ExecuteReader();
 
             List<string> ts = [];
 
             while (reader.Read())
             {
-                ts.Add($"[{reader["name"]}]");
+                ts.Add($"[{reader["TABLE_SCHEMA"]}].[{reader["TABLE_NAME"]}]");
             }
             reader.Close();
             return ts.ToArray();
@@ -72,25 +72,32 @@ namespace DBLinker
             return false;
         }
 
-        public DataTableAdapter? GetView(string name){
+        public DataTableAdapter? GetView(string name, string where="", string orderBy=""){
             string[] views = GetViewNames();
 
             if(views.Contains(name))
-                return new DataTableAdapter(new SqlDataAdapter($"SELECT * FROM {name};", dbc), autoFill, autoUpdate,false);
+                return new DataTableAdapter(
+                    new SqlDataAdapter(SelectBuilder(name, where, orderBy), dbc),//$"SELECT * FROM {name}{(orderBy!=""?$" ORDER BY {orderBy}":"")};"
+                    autoFill, autoUpdate,false);
 
             return null;
         }
 
         public DataTableAdapter? this[string tableName] { get => tables.ContainsKey(tableName)?tables[tableName]:null; }
 
-        public DataTableAdapter? GetTable(string name){
+        public DataTableAdapter? GetTable(string name, string where="", string orderBy=""){
             string[] views = GetTableNames();
 
             if(views.Contains(name))
-                return new DataTableAdapter(new SqlDataAdapter($"SELECT * FROM {name};", dbc), autoFill, autoUpdate);
+                return new DataTableAdapter(
+                    new SqlDataAdapter(SelectBuilder(name, where, orderBy), dbc),//$"SELECT * FROM {name}{(orderBy!=""?$" ORDER BY {orderBy}":"")};"
+                    autoFill, autoUpdate);
 
             return null;
         }
+
+        private static string SelectBuilder(string tableName, string where = "", string orderBy = "") =>
+            $"SELECT * FROM {tableName}{(where != "" ? $" WHERE {where}" : "")}{(orderBy != "" ? $" ORDER BY {orderBy}" : "")};";
 
         public SqlCommand CreateCommand(string sqlCommand) => new(sqlCommand, dbc);
 

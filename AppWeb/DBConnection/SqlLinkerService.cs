@@ -12,8 +12,8 @@ namespace DBLinker
         public string[]? GetTableNames();
         public string[]? GetViewNames();
         public DataTableAdapter? GetTableL(string tableName);
-        public DataTableAdapter? GetTable(string tableName);
-        public DataTableAdapter? GetView(string viewName);
+        public DataTableAdapter? GetTable(string tableName, string where="", string orderBy="");
+        public DataTableAdapter? GetView(string viewName, string where="", string orderBy="");
 
         public string[]? GetDBUsers(string server, string database, string user, string password, bool encrypt = true, bool trustCertificate = true);
     }
@@ -43,9 +43,9 @@ namespace DBLinker
             dbLink?.Close();
             dbLink=null;
         }
-        public DataTableAdapter? GetView(string viewName) => dbLink?.GetView(viewName);
+        public DataTableAdapter? GetView(string viewName, string where="", string orderBy="") => dbLink?.GetView(viewName,where,orderBy);
         public DataTableAdapter? GetTableL(string tableName) => dbLink?[tableName];
-        public DataTableAdapter? GetTable(string tableName) => dbLink?.GetTable(tableName);
+        public DataTableAdapter? GetTable(string tableName, string where="", string orderBy="") => dbLink?.GetTable(tableName,where,orderBy);//SELECT * FROM DBPROCEDURES_PARAMS ORDER BY SPECIFIC_NAME,OBJECT_ID,PARAM_ID
         public string[]? GetTableNames() => dbLink?.GetTableNames();
         public string[]? GetViewNames() => dbLink?.GetViewNames();
         public void LoadTables()

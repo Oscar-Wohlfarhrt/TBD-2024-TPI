@@ -1,4 +1,4 @@
-@page "/tableviewer/{name}"
+@page "/tableviewer/{name}/{view:bool}"
 
 @using DBLinker
 @using System.Data;
@@ -31,7 +31,7 @@
 }
 else{
     <h2>La tabla no existe o no se pudo cargar</h2>
-    <span>@Name</span>
+    <span>@Name</span><br>
     <span>@outName</span>
 }
 
@@ -39,29 +39,28 @@ else{
 @code{
     [Parameter]
     public string? Name { get; set; }
+    [Parameter]
+    public bool? View { get; set; }
     public string? outName;
     DataTableAdapter? table;
 
     private DataTableAdapter? GetTable(){
-        if(Name ==null)
+        if(Name==null)
             return null;
 
-        string[] splited = Name.Replace("_"," ").Split('.');
+        string[] splited = Name.Split('.');
         //[TestView]
         //table = GetTable("[dbo].[RanNames]")
         //dbLink.Connect("Oscar-PC","TBD2024","sa","Enderfire@20",autoFill: true,autoUpdate: true);
         //dbLink.LoadTables();
 
-        if(splited.Length == 2){
-            outName=$"[{splited[0]}].[{splited[1]}]";
+        outName=$"[{splited[0]}].[{splited[1]}]";
+        if(!(View ?? false)){
             return dbLink.GetTable(outName);
         }
-        else if(splited.Length == 1){
-            outName=$"[{splited[0]}]";
+        else{
             return dbLink.GetView(outName);
         }
-        else
-            return null;
     }
 }
     

@@ -34,11 +34,9 @@
     private string dbUsername="";
     private string dbPassword="";
 
-    private bool firstTry;
     private bool connected;
 
     private void LoginDatabase(){
-        firstTry = false;
         connected = false;
         connected = db.Connect(databaseServer,"TBD2024",dbUsername,dbPassword,autoFill: true,autoUpdate: true);
     }

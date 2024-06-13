@@ -1,0 +1,80 @@
+@page "/storeproc/{name}"
+
+@using Microsoft.AspNetCore.Antiforgery;
+
+@rendermode InteractiveServer
+@using DBLinker
+@using System.Data;
+
+@inject ISqlLinkerService dbLink
+
+<h1>@Name</h1>
+
+@if((table = GetParameters()) != null){
+    <form id="dynForm" @onsubmit="RunProcedure">
+        @foreach(DataRow row in table.Rows){
+            var index = (int)row["PARAM_ID"]-1;
+
+            <div class="mb-3">
+                <label for="@row["PARAM_NAME"]" class="form-label">@(((string)row["PARAM_NAME"])[1..])</label>
+                @switch((byte)row["PARAM_TYPE_ID"]){
+                    case 56:
+                        <input type="number" class="form-control" id="@row["PARAM_NAME"]" placeholder="@row["PARAM_TYPE"]"
+                            @oninput="@((e)=>OnValueChange(e,index))">//@bind-value="@(Parameters[(int)row["PARAM_ID"]-1])"
+                        break;
+                    case 40:
+                        <input type="datetime" class="form-control" id="@row["PARAM_NAME"]" placeholder="YYYY-MM-DD HH:mm:ss"
+                            @oninput="@((e)=>OnValueChange(e,index))">
+                        break;
+                    default:
+                        <input type="text" class="form-control" id="@row["PARAM_NAME"]" placeholder="@row["PARAM_TYPE"] @row["PARAM_TYPE_ID"]"
+                            @oninput="@((e)=>OnValueChange(e,index))">
+                        break;
+                }
+            </div>
+        }
+        <input value="Submit" type="submit" class="btn btn-primary mb-3">
+        <AntiforgeryToken/>
+    </form>
+    
+    
+}
+else{
+    <h2>La tabla no existe o no se pudo cargar</h2>
+    <span>@Name</span><br>
+    <span>@outName</span>
+}
+
+@code{
+    [Parameter]
+    public string? Name { get; set; }
+    public string? outName;
+    DataTableAdapter? table;
+
+    IFormCollection? extForm;
+
+    private DataTableAdapter? GetParameters(){
+        if(Name == null)
+            return null;
+
+        //string[] splited = Name.Replace("_"," ").Split('.');
+        
+        DataTableAdapter? table = dbLink.GetView("[dev].[DBPROCEDURES_PARAMS]",$"FULL_NAME LIKE '{Name}'","SPECIFIC_NAME, OBJECT_ID, PARAM_ID");
+        Parameters = new string[table?.Rows.Count ?? 0];
+        return table;
+    }
+
+    private string[] Parameters=[];
+
+    private void OnValueChange(ChangeEventArgs e, int index){
+        Parameters[index]=e.Value?.ToString()??"";
+        //Console.WriteLine($"works {index} = {e.Value}");
+        //Console.WriteLine($"{Parameters[index]}");
+    }
+    private void RunProcedure(EventArgs args){
+        foreach(string s in Parameters){
+            Console.WriteLine(s);
+        }
+    }
+
+}

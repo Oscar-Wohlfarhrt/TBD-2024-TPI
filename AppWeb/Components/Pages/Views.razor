@@ -6,10 +6,10 @@
 @inject ISqlLinkerService dbLink
 
 <h2>Views</h2>
-@foreach(var v in GetViews()){
-    <a href="/tableviewer/@(v.Replace("[","").Replace("]",""))">@(v.Replace("[","").Replace("]",""))</a><br>
+@foreach(var v in GetViews()){    
+    <a href="/tableviewer/@(v.Replace("[","").Replace("]",""))/true">@(v.Replace("[","").Replace("]",""))</a><br>
 }
 
 @code{
-    private string[] GetViews() => dbLink.GetViewNames() ?? [];
+    private string[] GetViews() => dbLink.GetViewNames()?.Where((v)=>!v.StartsWith("[dev]")).ToArray() ?? [];
 }
