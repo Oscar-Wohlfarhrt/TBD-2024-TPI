@@ -16,5 +16,5 @@ CREATE SEQUENCE dbo.SequenceGenericWork AS int START WITH 1 NO CACHE;
 CREATE SEQUENCE dbo.SequenceCompany AS int START WITH 1 NO CACHE;
 CREATE SEQUENCE dbo.SequenceMonthCertificate AS int START WITH 1 NO CACHE;
 CREATE SEQUENCE dbo.SequenceWorkPriority AS int START WITH 1 NO CACHE;
-
+CREATE SEQUENCE dbo.SequenceMonthCertificateDetail AS int START WITH 1 NO CACHE;
 SELECT NEXT VALUE FOR dbo.SecuenceLocale; 
