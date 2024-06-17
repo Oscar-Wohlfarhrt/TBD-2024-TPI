@@ -32,3 +32,16 @@ BEGIN
     RETURN @result;
 END;
 go
+
+
+
+update Task
+set Task.AreaId = gt.AreaId,Task.EstimatedDuration = gt.EstimatedDuration, Task.ManWorkCost = gt.ManWorkCost
+from Task
+inner join [Work] as w on Task.WorkId = w.WorkId
+inner join [GenericTask] as gt on gt.WorkType = w.WorkType and gt.TaskId = TaskNumber
+
+Select * from task as t
+inner join [Work] as w on t.WorkId = w.WorkId
+inner join [GenericTask] as gt on gt.WorkType = w.WorkType and gt.TaskId = t.TaskNumber
+

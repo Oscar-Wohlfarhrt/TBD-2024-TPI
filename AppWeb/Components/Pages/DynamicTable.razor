@@ -1,0 +1,27 @@
+
+@using System.Data;
+
+<table class="table">
+    <thead>
+        <tr>
+            @foreach (DataColumn head in Table.Columns){
+                <th>@head.ColumnName</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (DataRow row in Table.Rows)
+        {
+            <tr>
+                @foreach(var val in row.ItemArray){
+                    <td>@val</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code{
+    [Parameter, EditorRequired]
+    public DataTableAdapter Table {get;set;} = null!;
+}

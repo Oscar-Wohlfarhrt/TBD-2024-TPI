@@ -5,3 +5,5 @@ bin/
 bin/**
 obj/
 obj/**
+publish/
+publish/**

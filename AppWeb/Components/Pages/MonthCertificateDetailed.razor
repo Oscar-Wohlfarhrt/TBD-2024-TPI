@@ -1,86 +1,62 @@
 @page "/MonthCertificateDetailed"
+@rendermode InteractiveServer
 
 @using System.Data
+@inject ISqlLinkerService dbLink
 
-@inject ISqlLinkerService dblink
+<PageTitle>Certificado Mensual</PageTitle>
 
 <h1>Resumen de certificado mensual</h1>
 
-<select class="form-select" aria-label="Default select date">
-  <option selected>Seleccione un certificado</option>
-  <option value="1">One</option>
-  <option value="2">Two</option>
-  <option value="3">Three</option>
-</select>
+@{string[] opts = GetCertificates();}
 
+<select class="form-select" aria-label="Default select date" @onchange=@((e) => certIndex = int.Parse((string)(e.Value ?? "-1")))>
+  <option value="-1" selected>Seleccione un certificado</option>
+  
+  @for(int i = 0;i<opts.Length;i++){
+    <option value="@i">@opts[i]</option>
+  }
+</select>
+<br>
+
+@if(certIndex>=0){
 <h2>Detalles del certificado</h2>
 
-<p>Fecha de inicio: </p>
-<p>Fecha de fin: </p>
-<p>Compañia: </p>
-<p>Compañia contrante: </p>
-
+DataRow? rowCert = certTable?.Rows[certIndex];
+<p>Fecha de inicio: @rowCert?["StartDate"]</p>
+<p>Fecha de fin: @rowCert?["EndDate"]</p>
+<p>Compañia: @rowCert?["CompanyName"]</p>
+<p>Compañia contrante: @rowCert?["ElectricCompanyName"]</p>
 
 <h2>Trabajos certificados</h2>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td colspan="2">Larry the Bird</td>
-      <td>@twitter</td>
-    </tr>
-  </tbody>
-</table>
+DataTableAdapter? worksTable;
+@if((worksTable=dbLink?.GetView("[dbo].[WorkPerCertificate]",$"CreationDate = '{rowCert?["CreationDate"]:yyyy-MM-dd hh:mm:ss}'",""))!=null ){
+    <DynamicTable Table="worksTable" />
+}
 
 <h2>Materiales utilizados</h2>
+//CreationDate = {rowCert["CreationDate"]}
+DataTableAdapter? matsTable;
+@if((matsTable=dbLink?.GetView("[dbo].[CostoMensualXMaterial]",$"CreationDate = '{rowCert?["CreationDate"]:yyyy-MM-dd hh:mm:ss}'",""))!=null ){
+    <DynamicTable Table="matsTable" />
+}
+}
 
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td colspan="2">Larry the Bird</td>
-      <td>@twitter</td>
-    </tr>
-  </tbody>
-</table>
+@code{
+    DataTableAdapter? certTable;
+
+    int certIndex = -1;
+    private string[] GetCertificates(){
+        certTable = dbLink.GetView("[ger].[MonthCertificateWithCompany]");
+        if(certTable != null)
+        {
+            List<string> options = [];
+            foreach(DataRow row in certTable.Rows){
+                options.Add($"Certificado del {row["CreationDate"]:yyyy-MM-dd} para {row["StartDate"]:yyyy-MM}");
+            }
+            return [..options];
+        }
+        return [];
+    }
+}

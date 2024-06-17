@@ -7,4 +7,3 @@ Select ROW_NUMBER() OVER( ORDER BY newid() ) as DNI,Name,LastName
 from RanNamesCross;
 
 Select * from ConectionUser;
-

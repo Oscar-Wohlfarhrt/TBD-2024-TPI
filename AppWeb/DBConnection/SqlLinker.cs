@@ -60,6 +60,7 @@ namespace DBLinker
             return ts.ToArray();
         }
 
+        [Obsolete]
         public bool LoadTables()
         {            
             string[] strTables = GetTableNames();
@@ -83,6 +84,7 @@ namespace DBLinker
             return null;
         }
 
+        [Obsolete]
         public DataTableAdapter? this[string tableName] { get => tables.ContainsKey(tableName)?tables[tableName]:null; }
 
         public DataTableAdapter? GetTable(string name, string where="", string orderBy=""){
@@ -130,14 +132,13 @@ namespace DBLinker
                 adapter.UpdateCommand = cmdbuild.GetUpdateCommand();
             }
 
-            adapter.ContinueUpdateOnError = true;
-            //adapter.AcceptChangesDuringUpdate=true;
+            adapter.ContinueUpdateOnError = true; // evita que el DataAdapter tire una excepción en caso de error
+            
             this.adapter = adapter;
 
             if (autoFill)
             {
                 Fill();
-                //AcceptChanges();
             }
             if (autoUpdate)
             {
