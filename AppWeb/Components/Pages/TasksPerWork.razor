@@ -20,24 +20,24 @@
 <br>
 
 @if(workIndex>=0){
-<h2>Detalles del trabajo</h2>
+    <h2>Detalles del trabajo</h2>
 
-DataRow? rowWork = workTable?.Rows[workIndex];
-<p>Numero de conexion: @rowWork?["ConnectionNum"]</p>
-<p>Usuario: [@rowWork?["DNI"]] @rowWork?["UserLastName"], @rowWork?["UserName"]</p>
-<br>
-<p>Encargado: [@rowWork?["FileNumber"]] @rowWork?["LastName"], @rowWork?["Name"]</p>
-<p>Fecha de inicio: @rowWork?["StartDate"]</p>
-<p>Fecha de fin: @rowWork?["EndDate"]</p>
-<p>Prioridad: @rowWork?["PriorDescription"]</p>
+    DataRow? rowWork = workTable?.Rows[workIndex];
+    <p>Numero de conexion: @rowWork?["ConnectionNum"]</p>
+    <p>Usuario: [@rowWork?["DNI"]] @rowWork?["UserLastName"], @rowWork?["UserName"]</p>
+    <br>
+    <p>Encargado: [@rowWork?["FileNumber"]] @rowWork?["LastName"], @rowWork?["Name"]</p>
+    <p>Fecha de inicio: @rowWork?["StartDate"]</p>
+    <p>Fecha de fin: @rowWork?["EndDate"]</p>
+    <p>Prioridad: @rowWork?["PriorDescription"]</p>
 
 
-<h2>Tareas</h2>
+    <h2>Tareas</h2>
 
-DataTableAdapter? tasksTable;
-@if((tasksTable=dbLink?.GetView("[dbo].[tareasXTrabajo]",$"[Id de Trabajo] = {rowWork?["WorkId"]}",""))!=null ){
-    <DynamicTable Table="tasksTable" />
-}
+    DataTableAdapter? tasksTable;
+    @if((tasksTable=dbLink?.GetView("[dbo].[tareasXTrabajo]",$"[Id de Trabajo] = {rowWork?["WorkId"]}",""))!=null ){
+        <DynamicTable Table="tasksTable" />
+    }
 }
 
 @code{

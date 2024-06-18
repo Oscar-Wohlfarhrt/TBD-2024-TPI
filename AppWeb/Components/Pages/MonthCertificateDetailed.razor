@@ -20,27 +20,27 @@
 <br>
 
 @if(certIndex>=0){
-<h2>Detalles del certificado</h2>
+    <h2>Detalles del certificado</h2>
 
-DataRow? rowCert = certTable?.Rows[certIndex];
-<p>Fecha de inicio: @rowCert?["StartDate"]</p>
-<p>Fecha de fin: @rowCert?["EndDate"]</p>
-<p>Compañia: @rowCert?["CompanyName"]</p>
-<p>Compañia contrante: @rowCert?["ElectricCompanyName"]</p>
+    DataRow? rowCert = certTable?.Rows[certIndex];
+    <p>Fecha de inicio: @rowCert?["StartDate"]</p>
+    <p>Fecha de fin: @rowCert?["EndDate"]</p>
+    <p>Compañia: @rowCert?["CompanyName"]</p>
+    <p>Compañia contrante: @rowCert?["ElectricCompanyName"]</p>
 
-<h2>Trabajos certificados</h2>
+    <h2>Trabajos certificados</h2>
 
-DataTableAdapter? worksTable;
-@if((worksTable=dbLink?.GetView("[dbo].[WorkPerCertificate]",$"CreationDate = '{rowCert?["CreationDate"]:yyyy-MM-dd hh:mm:ss}'",""))!=null ){
-    <DynamicTable Table="worksTable" />
-}
+    DataTableAdapter? worksTable;
+    @if((worksTable=dbLink?.GetView("[dbo].[WorkPerCertificate]",$"CreationDate = '{rowCert?["CreationDate"]:yyyy-MM-dd hh:mm:ss}'",""))!=null ){
+        <DynamicTable Table="worksTable" />
+    }
 
-<h2>Materiales utilizados</h2>
-//CreationDate = {rowCert["CreationDate"]}
-DataTableAdapter? matsTable;
-@if((matsTable=dbLink?.GetView("[dbo].[CostoMensualXMaterial]",$"CreationDate = '{rowCert?["CreationDate"]:yyyy-MM-dd hh:mm:ss}'",""))!=null ){
-    <DynamicTable Table="matsTable" />
-}
+    <h2>Materiales utilizados</h2>
+    //CreationDate = {rowCert["CreationDate"]}
+    DataTableAdapter? matsTable;
+    @if((matsTable=dbLink?.GetView("[dbo].[CostoMensualXMaterial]",$"CreationDate = '{rowCert?["CreationDate"]:yyyy-MM-dd hh:mm:ss}'",""))!=null ){
+        <DynamicTable Table="matsTable" />
+    }
 }
 
 @code{
