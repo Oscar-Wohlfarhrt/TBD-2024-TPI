@@ -8,12 +8,11 @@ namespace DBLinker
         public bool IsConnected {get;}
         public bool Connect(string server, string database, string user, string password, bool encrypt = true, bool trustCertificate = true, bool autoFill = false, bool autoUpdate = false);
         public void Disconnect();
-        public void LoadTables();
         public string[]? GetTableNames();
         public string[]? GetViewNames();
-        public DataTableAdapter? GetTableL(string tableName);
         public DataTableAdapter? GetTable(string tableName, string where="", string orderBy="");
         public DataTableAdapter? GetView(string viewName, string where="", string orderBy="");
+        public int? ExecuteProcedure(string procedureName, params string[] parameters);
 
         public string[]? GetDBUsers(string server, string database, string user, string password, bool encrypt = true, bool trustCertificate = true);
     }
@@ -45,17 +44,13 @@ namespace DBLinker
         }
         public DataTableAdapter? GetView(string viewName, string where = "", string orderBy = "") => dbLink?.GetView(viewName, where, orderBy);
 
-        public DataTableAdapter? GetTableL(string tableName) => dbLink?[tableName];
         public DataTableAdapter? GetTable(string tableName, string where="", string orderBy="") => dbLink?.GetTable(tableName,where,orderBy);//SELECT * FROM DBPROCEDURES_PARAMS ORDER BY SPECIFIC_NAME,OBJECT_ID,PARAM_ID
         public string[]? GetTableNames() => dbLink?.GetTableNames();
         public string[]? GetViewNames() => dbLink?.GetViewNames();
-        public void LoadTables()
-        {
-            dbLink?.LoadTables();
-        }
 
         public string[]? GetDBUsers(string server, string database, string user, string password, bool encrypt = true, bool trustCertificate = true) =>
             SqlLinker.GetDBUsers(server, database, user, password, encrypt, trustCertificate);
+        public int? ExecuteProcedure(string procedureName, params string[] parameters) => dbLink?.ExecuteProcedure(procedureName, parameters);
         
     }
 }

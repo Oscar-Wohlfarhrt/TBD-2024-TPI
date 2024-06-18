@@ -48,6 +48,7 @@ else{
 @code{
     [Parameter]
     public string? Name { get; set; }
+    public string? FormatedName { get; set; }
     public string? outName;
     DataTableAdapter? table;
 
@@ -55,7 +56,11 @@ else{
         if(Name == null)
             return null;
 
-        //string[] splited = Name.Replace("_"," ").Split('.');
+        string[] splited = Name.Split('.');
+        if(splited.Length <= 1)
+            FormatedName = $"[{Name}]";
+        else
+            FormatedName = $"[{splited[0]}].[{splited[1]}]";
         
         DataTableAdapter? table = dbLink.GetView("[dev].[DBPROCEDURES_PARAMS]",$"FULL_NAME LIKE '{Name}'","SPECIFIC_NAME, OBJECT_ID, PARAM_ID");
         if((Parameters == null) || (Parameters.Length != (table?.Rows.Count ?? 0)))
@@ -65,7 +70,7 @@ else{
 
     private string[] Parameters=[];
 
-    static List<int> stringTypes = [40,167];
+    static List<byte> stringTypes = [40,167];
 
     private void OnValueChange(ChangeEventArgs e, int index){
         Parameters[index]=e.Value?.ToString()??"";
@@ -73,16 +78,23 @@ else{
         //Console.WriteLine($"{Parameters[index]}");
     }
     private void RunProcedure(EventArgs args){
-        if(table != null){
-            foreach(DataRow row in table?.Rows){
-                if(stringTypes.Contains(row["PARAM_TYPE_ID"])){
-                    Console.WriteLine($"{row["PARAM_NAME"]} = '{Parameters[(int)row["PARAM_ID"]-1]}'");
+        if(table != null && FormatedName != null){
+            string[] formatedParams= new string[table.Rows.Count];
+            foreach(DataRow row in table.Rows){
+                int index= (int)row["PARAM_ID"]-1;
+                if (Parameters[index] == null || Parameters[index]==""){
+                    formatedParams[index] = "NULL";
+                }
+                else if(stringTypes.Contains((byte)row["PARAM_TYPE_ID"])){
+                    formatedParams[index]=$"'{Parameters[index]}'";
                 }
                 else{
-                    Console.WriteLine($"{row["PARAM_NAME"]} = {Parameters[(int)row["PARAM_ID"]-1]}");
+                    formatedParams[index]=$"{Parameters[index]}";
                 }
+                Console.WriteLine($"{row["PARAM_NAME"]} = {formatedParams[index]} | {Parameters[index] ?? "null test"}");
             }
+
+            dbLink.ExecuteProcedure(FormatedName,formatedParams);
         }
     }
-
 }

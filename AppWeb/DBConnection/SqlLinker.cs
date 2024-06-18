@@ -34,7 +34,7 @@ namespace DBLinker
         }
 
         public string[] GetTableNames(){
-            SqlCommand cmd = new("SELECT TABLE_SCHEMA,TABLE_NAME FROM INFORMATION_SCHEMA.TABLES;", dbc);
+            SqlCommand cmd = new("SELECT TABLE_SCHEMA,TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE';", dbc);
             SqlDataReader reader = cmd.ExecuteReader();
 
             List<string> ts = [];
@@ -102,6 +102,11 @@ namespace DBLinker
             $"SELECT * FROM {tableName}{(where != "" ? $" WHERE {where}" : "")}{(orderBy != "" ? $" ORDER BY {orderBy}" : "")};";
 
         public SqlCommand CreateCommand(string sqlCommand) => new(sqlCommand, dbc);
+
+        public int ExecuteProcedure(string procedureName, params string[] parameters){
+            SqlCommand cmd = new($"EXECUTE {procedureName} {string.Join(", ", parameters)};",dbc);
+            return cmd.ExecuteNonQuery();
+        }
 
         public static string[] GetDBUsers(string server, string database, string user, string password, bool encrypt = true, bool trustCertificate = true){
             SqlLinker db = new(server, database, user, password, encrypt,trustCertificate);
