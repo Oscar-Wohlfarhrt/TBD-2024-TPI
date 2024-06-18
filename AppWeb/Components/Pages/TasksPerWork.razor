@@ -1,0 +1,59 @@
+@page "/TasksPerWorks"
+@rendermode InteractiveServer
+
+@using System.Data
+@inject ISqlLinkerService dbLink
+
+<PageTitle>Certificado Mensual</PageTitle>
+
+<h1>Resumen de certificado mensual</h1>
+
+@{string[] opts = GetWorks();}
+
+<select class="form-select" aria-label="Default select date" @onchange=@((e) => workIndex = int.Parse((string)(e.Value ?? "-1")))>
+  <option value="-1" selected>Seleccione un trabajo</option>
+  
+  @for(int i = 0;i<opts.Length;i++){
+    <option value="@i">@opts[i]</option>
+  }
+</select>
+<br>
+
+@if(workIndex>=0){
+<h2>Detalles del trabajo</h2>
+
+DataRow? rowWork = workTable?.Rows[workIndex];
+<p>Numero de conexion: @rowWork?["ConnectionNum"]</p>
+<p>Usuario: [@rowWork?["DNI"]] @rowWork?["UserLastName"], @rowWork?["UserName"]</p>
+<br>
+<p>Encargado: [@rowWork?["FileNumber"]] @rowWork?["LastName"], @rowWork?["Name"]</p>
+<p>Fecha de inicio: @rowWork?["StartDate"]</p>
+<p>Fecha de fin: @rowWork?["EndDate"]</p>
+<p>Prioridad: @rowWork?["PriorDescription"]</p>
+
+
+<h2>Tareas</h2>
+
+DataTableAdapter? tasksTable;
+@if((tasksTable=dbLink?.GetView("[dbo].[tareasXTrabajo]",$"[Id de Trabajo] = {rowWork?["WorkId"]}",""))!=null ){
+    <DynamicTable Table="tasksTable" />
+}
+}
+
+@code{
+    DataTableAdapter? workTable;
+
+    int workIndex = -1;
+    private string[] GetWorks(){
+        workTable = dbLink.GetView("[dbo].[WorksByCurrentUser]");
+        if(workTable != null)
+        {
+            List<string> options = [];
+            foreach(DataRow row in workTable.Rows){
+                options.Add($"{row["WorkId"]} - {row["Description"]} - Requested: {row["RequestDate"]:yyyy-MM-dd}");
+            }
+            return [..options];
+        }
+        return [];
+    }
+}

@@ -65,6 +65,8 @@ else{
 
     private string[] Parameters=[];
 
+    static List<int> stringTypes = [40,167];
+
     private void OnValueChange(ChangeEventArgs e, int index){
         Parameters[index]=e.Value?.ToString()??"";
         //Console.WriteLine($"works {index} = {e.Value}");
@@ -73,7 +75,12 @@ else{
     private void RunProcedure(EventArgs args){
         if(table != null){
             foreach(DataRow row in table?.Rows){
-                Console.WriteLine($"{row["PARAM_NAME"]} = {Parameters[(int)row["PARAM_ID"]-1]}");
+                if(stringTypes.Contains(row["PARAM_TYPE_ID"])){
+                    Console.WriteLine($"{row["PARAM_NAME"]} = '{Parameters[(int)row["PARAM_ID"]-1]}'");
+                }
+                else{
+                    Console.WriteLine($"{row["PARAM_NAME"]} = {Parameters[(int)row["PARAM_ID"]-1]}");
+                }
             }
         }
     }

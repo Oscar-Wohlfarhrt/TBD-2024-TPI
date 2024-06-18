@@ -36,7 +36,7 @@ SELECT
     par.system_type_id AS PARAM_TYPE_ID,
     t.name AS PARAM_TYPE
 FROM sys.parameters AS par
-INNER JOIN DBPROCEDURES AS pro ON par.object_id = pro.OBJECT_ID
+INNER JOIN dev.DBPROCEDURES AS pro ON par.object_id = pro.OBJECT_ID
 INNER JOIN sys.types AS t ON par.system_type_id = t.system_type_id;
 go
 

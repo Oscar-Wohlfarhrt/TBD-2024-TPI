@@ -9,25 +9,7 @@
 <h1>@Name</h1>
 
 @if((table = GetTable()) != null){
-    <table class="table">
-        <thead>
-            <tr>
-                @foreach (DataColumn head in table.Columns){
-                    <th>@head.ColumnName</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (DataRow row in table.Rows)
-            {
-                <tr>
-                    @foreach(var val in row.ItemArray){
-                        <td>@val</td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
+    <DynamicTable Table="table"/>
 }
 else{
     <h2>La tabla no existe o no se pudo cargar</h2>

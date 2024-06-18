@@ -1,11 +1,12 @@
 
 @using System.Data;
+@using System.Text.RegularExpressions;
 
 <table class="table">
     <thead>
         <tr>
             @foreach (DataColumn head in Table.Columns){
-                <th>@head.ColumnName</th>
+                <th>@(Regex.IsMatch(head.ColumnName,"^[^a-z]*$")?head.ColumnName:Regex.Replace(head.ColumnName, "(\\B[A-Z])", " $1"))</th>
             }
         </tr>
     </thead>
