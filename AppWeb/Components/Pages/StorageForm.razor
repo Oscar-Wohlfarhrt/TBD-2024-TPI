@@ -42,14 +42,18 @@
 else{
     <h2>La tabla no existe o no se pudo cargar</h2>
     <span>@Name</span><br>
-    <span>@outName</span>
+}
+@if(errorString != null && errorString != ""){
+    <div class="alert alert-danger" role="alert">
+        @errorString
+    </div>
 }
 
 @code{
     [Parameter]
     public string? Name { get; set; }
     public string? FormatedName { get; set; }
-    public string? outName;
+    public string? errorString;
     DataTableAdapter? table;
 
     private DataTableAdapter? GetParameters(){
@@ -74,8 +78,6 @@ else{
 
     private void OnValueChange(ChangeEventArgs e, int index){
         Parameters[index]=e.Value?.ToString()??"";
-        //Console.WriteLine($"works {index} = {e.Value}");
-        //Console.WriteLine($"{Parameters[index]}");
     }
     private void RunProcedure(EventArgs args){
         if(table != null && FormatedName != null){
@@ -94,7 +96,13 @@ else{
                 Console.WriteLine($"{row["PARAM_NAME"]} = {formatedParams[index]} | {Parameters[index] ?? "null test"}");
             }
 
-            dbLink.ExecuteProcedure(FormatedName,formatedParams);
+            try{
+                errorString="";
+                dbLink.ExecuteProcedure(FormatedName,formatedParams);
+            }
+            catch{
+                errorString="Revise el formato o los datos ingresados";
+            }
         }
     }
 }
